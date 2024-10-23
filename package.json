@@ -1,7 +1,16 @@
 {
-  "name": "implementation-guide-astro",
+  "name": "contentstack-implementation-guide-astro",
   "type": "module",
-  "version": "0.0.1",
+  "version": "0.0.0",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/timbenniks/contentstack-implementation-guide-astro"
+  },
+  "description": "contentstack-implementation-guide-astro",
+  "author": "Tim Benniks <tbenniks@gmail.com>",
+  "homepage": "https://timbenniks.dev",
+  "license": "MIT",
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
@@ -10,8 +19,12 @@
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "^4.15.7",
-    "@astrojs/check": "^0.9.3",
-    "typescript": "^5.6.2"
+    "@astrojs/check": "^0.9.4",
+    "@astrojs/tailwind": "^5.1.2",
+    "@contentstack/delivery-sdk": "^4.3.0",
+    "@contentstack/live-preview-utils": "^1.4.5",
+    "astro": "^4.16.7",
+    "tailwindcss": "^3.4.14",
+    "typescript": "^5.6.3"
   }
 }

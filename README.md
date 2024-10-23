@@ -1,54 +1,76 @@
-# Astro Starter Kit: Basics
+# Contentstack SDK implemenation guide: Astro (SSR)
 
-```sh
-npm create astro@latest -- --template basics
+This is a bare-bones example to connect Astro in `server` mode to Contentstack.
+This example covers the following items:
+
+- Delivery API query
+- live preview setup
+
+> This example has Contentstack Live preview but does not use the Contentsteck delivery SDK. It uses the API directly. Live preview is set up with SSR mode true. Which means Contentstack adds query parameters to the URL which we grab in the code and give to the delivery API including the live_preview token. Contentstack refreshes the browser on content edit each time.
+
+## How to get started
+
+Before you can run this code, you will need a Contentstack "Stack" to connect to.
+Follow the following steps to seed a Stack that this codebase understands.
+
+### 1. Create a new Stack
+
+Log into Contentstack (remember your region) and create a new Stack.
+
+### 2. Get the seed data for your Stack
+
+Download the Stack seed data from Github. Click download as ZIP and put the files in a folder you can access.
+The folder contains all things needed to fill up your new Stack to work with this bare-bones example.
+
+### 3. Install the CLI
+
+```bash
+npm install -g @contentstack/cli
 ```
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/withastro/astro/tree/latest/examples/basics)
-[![Open with CodeSandbox](https://assets.codesandbox.io/github/button-edit-lime.svg)](https://codesandbox.io/p/sandbox/github/withastro/astro/tree/latest/examples/basics)
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/withastro/astro?devcontainer_path=.devcontainer/basics/devcontainer.json)
+### 4. Log in via the CLI
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
-
-![just-the-basics](https://github.com/withastro/astro/assets/2244813/a0a5533c-a856-4198-8470-2d67b1d7c554)
-
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
-/
-├── public/
-│   └── favicon.svg
-├── src/
-│   ├── components/
-│   │   └── Card.astro
-│   ├── layouts/
-│   │   └── Layout.astro
-│   └── pages/
-│       └── index.astro
-└── package.json
+```bash
+csdx auth:login
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+### 5. Get your organization UID
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+In your Contentstack Organization dashboard find `Org admin` and copy your Organization ID (Example: `blt481c598b0d8352d9`).
 
-Any static assets, like images, can be placed in the `public/` directory.
+### 6. Create a new stack
 
-## 🧞 Commands
+Make sure to replace `<YOUR_ORG_ID>` with your actual Organization ID and run the below.
 
-All commands are run from the root of the project, from a terminal:
+```bash
+csdx cm:stacks:seed --repo "timbenniks/contentstack-implementation-guides-seed" --org "<YOUR_ORG_ID>" -n "Implementation Guide Astro"
+```
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+### 7. Create a new delivery token.
 
-## 👀 Want to learn more?
+Go to Settings > Tokens and create a delivery token. Select the `preview` scope and turn on `Create preview token`
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+### 8. Turn on Live Preview
+
+Go to Settings > Live Preview. Click enable and select the `Preview` environment in the drop down. Hit save.
+
+### 9. Install the dependencies
+
+```bash
+npm install
+```
+
+### 10. Run your app
+
+```bash
+npm run dev
+```
+
+### 11. See your page in live preview mode
+
+Go to Entries and select the only entry in the list.
+In the sidebar, click on the live preview icon.
+
+## Caveats
+
+Due to a small issue in the latest version of the `@contentstack/live-preview-utils`, this repo uses version `1.4.5`.
