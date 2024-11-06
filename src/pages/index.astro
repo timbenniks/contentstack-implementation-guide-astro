@@ -3,15 +3,10 @@ import Layout from "../layouts/Layout.astro";
 import { getPage } from "../lib/contentstack";
 
 const params = Astro.url.searchParams;
-const live_preview = params.get("live_preview");
-const content_type_uid = params.get("content_type_uid");
-const entry_uid = params.get("entry_uid");
-
-const page =
-  live_preview &&
-  content_type_uid &&
-  entry_uid &&
-  (await getPage(live_preview, content_type_uid, entry_uid));
+const live_preview = params.get("live_preview") || "";
+const content_type_uid = params.get("content_type_uid") || "page";
+const entry_uid = params.get("entry_uid") || "blte55cf3411ecaee0e";
+const page = await getPage(live_preview, content_type_uid, entry_uid);
 ---
 
 <script>
@@ -24,6 +19,7 @@ const page =
   const previewToken = "csa128deacffe0b26386090915";
   const livePreviewHost = "eu-rest-preview.contentstack.com";
   const appHost = "eu-app.contentstack.com";
+  const mode = "builder";
 
   ContentstackLivePreview.init({
     ssr: true,
@@ -33,6 +29,7 @@ const page =
       deliveryToken,
       environment,
       region,
+      mode,
       live_preview: {
         enable: true,
         preview_token: previewToken,
@@ -87,6 +84,58 @@ const page =
           <div {...(page?.$ && page?.$.rich_text)} set:html={page?.rich_text} />
         ) : null
       }
+
+      <div
+        class="space-y-8 max-w-screen-sm mt-4"
+        {...page?.$ && page?.$.blocks}
+      >
+        {
+          page?.blocks?.map((item: { block: any }, index: number) => {
+            const { block } = item;
+            const isImageLeft = block.layout === "image_left";
+
+            return (
+              <div
+                key={block._metadata.uid}
+                {...(page?.$ && page?.$[`blocks__${index}`])}
+                class={`flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-4 ${
+                  isImageLeft ? "md:flex-row" : "md:flex-row-reverse"
+                }`}
+              >
+                <div class="w-full md:w-1/2">
+                  {block.image ? (
+                    <img
+                      src={block.image.url}
+                      alt={block.image.title}
+                      width={200}
+                      height={112}
+                      class="w-full"
+                      {...(block?.$ && block?.$.image)}
+                    />
+                  ) : null}
+                </div>
+                <div class="w-full md:w-1/2">
+                  {block.title ? (
+                    <h2
+                      class="text-2xl font-bold"
+                      {...(block?.$ && block?.$.title)}
+                    >
+                      {block.title}
+                    </h2>
+                  ) : null}
+                  {block.copy ? (
+                    <div
+                      {...(block?.$ && block?.$.copy)}
+                      set:html={block?.copy}
+                      class="prose"
+                    />
+                  ) : null}
+                </div>
+              </div>
+            );
+          })
+        }
+      </div>
     </section>
   </main>
 </Layout>
