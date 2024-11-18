@@ -1,56 +1,31 @@
 ---
+import type { LivePreviewQuery } from "@contentstack/delivery-sdk";
 import Layout from "../layouts/Layout.astro";
 import { getPage } from "../lib/contentstack";
 
-const params = Astro.url.searchParams;
-const live_preview = params.get("live_preview") || "";
-const content_type_uid = params.get("content_type_uid") || "page";
-const entry_uid = params.get("entry_uid") || "blte55cf3411ecaee0e";
-const page = await getPage(live_preview, content_type_uid, entry_uid);
+export const prerender = false;
+
+const searchParams = Astro.url.searchParams;
+const live_preview = searchParams.get("live_preview");
+const content_type_uid = searchParams.get("content_type_uid") || "";
+const entry_uid = searchParams.get("entry_uid") || "";
+
+const page = await getPage({
+  url: "/",
+  searchParams: {
+    live_preview,
+    contentTypeUid: content_type_uid,
+    entryUid: entry_uid,
+  } as LivePreviewQuery,
+});
 ---
 
 <script>
-  import ContentstackLivePreview from "@contentstack/live-preview-utils";
-
-  const apiKey = "blte766efb491f96715";
-  const deliveryToken = "cs620decb0e6bb175e31210ce9";
-  const environment = "preview";
-  const region = "eu";
-  const previewToken = "csa128deacffe0b26386090915";
-  const livePreviewHost = "eu-rest-preview.contentstack.com";
-  const appHost = "eu-app.contentstack.com";
-  const mode = "builder";
-
-  ContentstackLivePreview.init({
-    ssr: true,
-    enable: true,
-    stackSdk: {
-      apiKey,
-      deliveryToken,
-      environment,
-      region,
-      mode,
-      live_preview: {
-        enable: true,
-        preview_token: previewToken,
-        host: livePreviewHost,
-      },
-    },
-    stackDetails: {
-      apiKey,
-      environment,
-    },
-    clientUrlParams: {
-      host: appHost,
-    },
-    editButton: {
-      enable: true,
-    },
-  });
+  import { initLivePreview } from "../lib/contentstack";
+  initLivePreview();
 </script>
-
 <Layout title="Welcome to Astro.">
-  <main class="max-w-screen-2xl mx-auto">
+  <main class="max-w-screen-md mx-auto">
     <section class="p-4" id="wrapper">
       {
         page?.title ? (
@@ -98,7 +73,7 @@ const page = await getPage(live_preview, content_type_uid, entry_uid);
               <div
                 key={block._metadata.uid}
                 {...(page?.$ && page?.$[`blocks__${index}`])}
-                class={`flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-4 ${
+                class={`flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-4 bg-slate-100 ${
                   isImageLeft ? "md:flex-row" : "md:flex-row-reverse"
                 }`}
               >

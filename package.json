@@ -1,7 +1,7 @@
 {
   "name": "contentstack-implementation-guide-astro",
   "type": "module",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "private": false,
   "repository": {
     "type": "git",
@@ -21,10 +21,10 @@
   "dependencies": {
     "@astrojs/check": "^0.9.4",
     "@astrojs/tailwind": "^5.1.2",
-    "@contentstack/delivery-sdk": "4.3.0",
-    "@contentstack/live-preview-utils": "3.0.0",
-    "astro": "^4.16.10",
-    "tailwindcss": "^3.4.14",
+    "@contentstack/delivery-sdk": "4.4.2",
+    "@contentstack/live-preview-utils": "3.0.1",
+    "astro": "^4.16.13",
+    "tailwindcss": "^3.4.15",
     "typescript": "^5.6.3"
   }
 }

@@ -1,12 +1,12 @@
 # Contentstack SDK implemenation guide: Astro (SSR)
 
-This is a bare-bones example to connect Astro in `server` mode to Contentstack.
+This is a bare-bones example to connect Astro in `hybrid` mode to Contentstack.
 This example covers the following items:
 
 - Delivery API query
 - live preview setup
 
-> This example has Contentstack Live preview but does not use the Contentsteck delivery SDK. It uses the API directly. Live preview is set up with SSR mode true. Which means Contentstack adds query parameters to the URL which we grab in the code and give to the delivery API including the live_preview token. Contentstack refreshes the browser on content edit each time.
+> Live preview is set up with SSR mode true. Which means Contentstack adds query parameters to the URL which we grab in the code and give to the delivery API including the live_preview token. Contentstack refreshes the browser on content edit each time.
 
 ## How to get started
 
@@ -70,7 +70,3 @@ npm run dev
 
 Go to Entries and select the only entry in the list.
 In the sidebar, click on the live preview icon.
-
-## Caveats
-
-Due to a small issue in the latest version of the `@contentstack/live-preview-utils`, this repo uses version `1.4.5`.

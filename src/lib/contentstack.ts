@@ -1,36 +1,53 @@
-import contentstack from '@contentstack/delivery-sdk';
+import contentstack, { QueryOperation, Region, type LivePreviewQuery } from '@contentstack/delivery-sdk';
+import ContentstackLivePreview, { type IStackSdk } from '@contentstack/live-preview-utils';
+import type { Page } from './types';
 
-export async function getPage(live_preview: string, content_type_uid: string, entry_uid: string) {
-  const apiKey = "blte766efb491f96715";
-  const deliveryToken = "cs620decb0e6bb175e31210ce9";
-  const environment = "preview";
-  const previewToken = "csa128deacffe0b26386090915";
-  const region = "eu";
+export const stack = contentstack.stack({
+  apiKey: import.meta.env.PUBLIC_CONTENTSTACK_API_KEY as string,
+  deliveryToken: import.meta.env.PUBLIC_CONTENTSTACK_DELIVERY_TOKEN as string,
+  environment: import.meta.env.PUBLIC_CONTENTSTACK_ENVIRONMENT as string,
+  region: import.meta.env.PUBLIC_CONTENTSTACK_REGION === 'EU' ? Region.EU : Region.US,
+  live_preview: {
+    enable: import.meta.env.PUBLIC_CONTENTSTACK_PREVIEW === 'true',
+    preview_token: import.meta.env.PUBLIC_CONTENTSTACK_PREVIEW_TOKEN,
+    host: import.meta.env.PUBLIC_CONTENTSTACK_REGION === 'EU' ? "eu-rest-preview.contentstack.com" : "rest-preview.contentstack.com",
+  }
+});
 
-  let hostname = region === "eu" ? "eu-cdn.contentstack.com" : "cdn.contentstack.com";
+export function initLivePreview() {
+  ContentstackLivePreview.init({
+    ssr: true,
+    enable: import.meta.env.PUBLIC_CONTENTSTACK_PREVIEW === 'true',
+    mode: "builder",
+    stackSdk: stack.config as IStackSdk,
+    stackDetails: {
+      apiKey: import.meta.env.PUBLIC_CONTENTSTACK_API_KEY as string,
+      environment: import.meta.env.PUBLIC_CONTENTSTACK_ENVIRONMENT as string,
+    }
+  });
+}
 
-  const headers = new Headers();
-  headers.append("Content-Type", "application/json");
-  headers.append("api_key", apiKey);
-  headers.append("access_token", deliveryToken);
+type Props = { url: string, searchParams?: LivePreviewQuery }
 
-  if (live_preview !== '') {
-    headers.append("preview_token", previewToken);
-    headers.append("live_preview", live_preview);
-    hostname = region === "eu" ? "eu-rest-preview.contentstack.com" : "rest-preview.contentstack.com";;
+export async function getPage({ url, searchParams }: Props) {
+  if (searchParams && searchParams.live_preview) {
+    stack.livePreviewQuery(searchParams)
   }
 
-  const url = `https://${hostname}/v3/content_types/${content_type_uid}/entries/${entry_uid}?environment=${environment}`
+  const result = await stack
+    .contentType("page")
+    .entry()
+    .query()
+    .where("url", QueryOperation.EQUALS, url)
+    .find<Page>();
 
-  const res = await fetch(url, {
-    method: "GET",
-    headers,
-  });
+  if (result.entries) {
+    const entry = result.entries[0]
 
-  const result = await res.json();
-  const { entry } = result
+    if (import.meta.env.PUBLIC_CONTENTSTACK_PREVIEW === 'true') {
+      contentstack.Utils.addEditableTags(entry as any, 'page', true);
+    }
 
-  contentstack.default.Utils.addEditableTags(entry, content_type_uid, true);
-
-  return entry
+    return entry;
+  }
 }
