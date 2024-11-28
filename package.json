@@ -23,8 +23,8 @@
     "@astrojs/tailwind": "^5.1.2",
     "@contentstack/delivery-sdk": "4.4.2",
     "@contentstack/live-preview-utils": "3.0.1",
-    "astro": "^4.16.13",
+    "astro": "^4.16.16",
     "tailwindcss": "^3.4.15",
-    "typescript": "^5.6.3"
+    "typescript": "^5.7.2"
   }
 }
