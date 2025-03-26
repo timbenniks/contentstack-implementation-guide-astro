@@ -23,6 +23,15 @@ export function initLivePreview() {
     stackDetails: {
       apiKey: import.meta.env.PUBLIC_CONTENTSTACK_API_KEY as string,
       environment: import.meta.env.PUBLIC_CONTENTSTACK_ENVIRONMENT as string,
+    },
+    clientUrlParams: {
+      host: import.meta.env.PUBLIC_CONTENTSTACK_REGION === "EU"
+        ? "eu-app.contentstack.com"
+        : "app.contentstack.com",
+    },
+    editButton: {
+      enable: true,
+      exclude: ["outsideLivePreviewPortal"]
     }
   });
 }
